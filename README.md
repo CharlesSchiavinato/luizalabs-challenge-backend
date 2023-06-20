@@ -89,7 +89,7 @@ go get github.com/go-swagger/go-swagger/cmd/swagger@latest
 5. Deixei os arquivos txt de exemplos enviados na pasta raiz do projeto.
 6. Para poder utilizar o banco de dados Postgres precisa alterar apenas três alterações no arquivo server.go.
 
-    Na linha 29 substituir a importação do package
+    Na linha 28 substituir a importação do package
     ```
     "github.com/CharlesSchiavinato/luizalabs-challenge-backend/service/database/repository/in_memory" 
     ```
