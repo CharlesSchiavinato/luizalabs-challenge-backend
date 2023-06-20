@@ -85,8 +85,9 @@ go get github.com/go-swagger/go-swagger/cmd/swagger@latest
    - Ler as informações de 3 lista diferentes em um unico loop.
 2. Apesar de não ter aplicado nesse projeto também tenho conhecimento do padrão conventional commits.
 3. Faltou incluir na documentação da API a relação dos erros que podem ser retornado.
-4. Não fiz paginação no endpoint de listagem de pedidos
-5. Para poder utilizar o banco de dados Postgres precisa alterar apenas três alterações no arquivo server.go.
+4. Não fiz paginação no endpoint de listagem de pedidos por ser uma API apenas para normalização dos dados.
+5. Deixei os arquivos txt de exemplos enviados na pasta raiz do projeto.
+6. Para poder utilizar o banco de dados Postgres precisa alterar apenas três alterações no arquivo server.go.
 
     Na linha 29 substituir a importação do package
     ```
