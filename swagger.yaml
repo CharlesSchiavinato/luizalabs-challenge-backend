@@ -1,0 +1,219 @@
+basePath: /api
+definitions:
+  model.Error:
+    properties:
+      code:
+        description: Código do Erro
+        example: 400.1
+        format: float
+        type: number
+      message:
+        description: Descrição do Erro
+        example: error message
+        type: string
+    required:
+    - code
+    - message
+    type: object
+  model.LegacyImportResult:
+    properties:
+      orders:
+        description: Quantidade de pedidos importados
+        type: integer
+      products:
+        description: Quantidade de produtos importados
+        type: integer
+      users:
+        description: Quantidade de usuários importados
+        type: integer
+    required:
+    - orders
+    - products
+    - users
+    type: object
+  model.OrderDetails:
+    properties:
+      name:
+        description: Nome do Usuário
+        example: Joao
+        type: string
+      orders:
+        description: Lista de Pedidos
+        items:
+          $ref: '#/definitions/model.OrderDetailsOrder'
+        type: array
+      user_id:
+        description: ID do Usuário
+        example: 1
+        type: integer
+    required:
+    - name
+    - orders
+    - user_id
+    type: object
+  model.OrderDetailsOrder:
+    properties:
+      date:
+        description: Data da Compra
+        example: "2019-08-24"
+        format: date
+        type: string
+      order_id:
+        description: ID do Pedido
+        example: 1
+        type: integer
+      products:
+        description: Lista de Produtos
+        items:
+          $ref: '#/definitions/model.OrderDetailsProduct'
+        type: array
+      total:
+        description: Valor Total do Pedido
+        example: 23.45
+        format: float
+        type: number
+    required:
+    - date
+    - order_id
+    - products
+    - total
+    type: object
+  model.OrderDetailsProduct:
+    properties:
+      product_id:
+        description: ID do Produto
+        example: 1
+        type: integer
+      value:
+        description: Valor do Produto
+        example: 23.45
+        format: float
+        type: number
+    required:
+    - product_id
+    - value
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:9000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Está API tem como objetivo carregar os pedidos do sistema legado a
+    partir de arquivos no formato TXT desnormalizado e devolver as informações normalizadas
+    no formato JSON.
+  title: API de Normalização das Informações dos Pedidos do Sistema Legado
+  version: 1.0.0
+paths:
+  /order:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os Pedidos ou os Pedidos referente ao período informado.
+        O período não pode ser superior a 31 dias.
+      parameters:
+      - description: Data da Compra Inicial (AAAA-MM-DD)
+        example: '"2020-05-23"'
+        in: query
+        name: from
+        type: string
+      - description: Data da Compra Final (AAAA-MM-DD)
+        example: '"2020-05-23"'
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.OrderDetails'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: Listar Pedidos
+      tags:
+      - Pedidos
+  /order/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna as informações do Pedido referente ao ID informado.
+      parameters:
+      - description: Número do Pedido
+        example: "1"
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.OrderDetails'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: Consultar Pedido por ID
+      tags:
+      - Pedidos
+  /order/legacy/import:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Importação de pedidos do sistema legado.<br/><br/>
+        <strong>ATENÇÃO:</strong><br/>
+        A API mantém apenas os pedidos do último arquivo importado.<br/>
+        Todo o conteúdo do arquivo será desconsiderado caso ocorra algum erro durante a importação.<br/>
+        Por padrão a API armazena as informações do arquivo importado em memória, portanto se a API for reiniciada os pedidos do último arquivo importado serão perdido e precisará ser importado novamente.<br/>
+        É possível configurar a API para realizar o armazenamento do último arquivo importado em banco de dados.
+      parameters:
+      - description: Arquivo a ser importado (formato TXT com posição fixa)
+        in: formData
+        name: file
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.LegacyImportResult'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: Importar Legado
+      tags:
+      - Pedidos
+swagger: "2.0"

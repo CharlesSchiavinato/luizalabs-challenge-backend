@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: luizalabs-postgres
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: db_luizalabs
+      POSTGRES_USER: userluizalabs
+      POSTGRES_PASSWORD: luizaLABS@123
+    volumes:
+      - luizalabs-db-data:/var/lib/postgres/data
+    networks:
+      - luizalabs-network
+
+ # adminer:
+  #   container_name: luizalabs-adminer
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - luizalabs-network
+
+  cache:
+    container_name: luizalabs-redis
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - luizalabs-network
+
+volumes:
+  luizalabs-db-data:
+
+networks:
+  luizalabs-network:
